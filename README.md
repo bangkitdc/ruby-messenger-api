@@ -41,7 +41,7 @@ The challenge is make sure when you run `bundle exec rspec`, all result is green
   <img width="550" alt="Screenshot 2024-05-18 021440" src="https://github.com/bangkitdc/ruby-messenger-api/assets/87227379/23fe914d-3683-49bc-9abd-68fcd6b30b3c">
 </div>
 
-## Documentation
+## Documentations
 <div align="center">
   <img width="510" alt="create_conv" src="https://github.com/bangkitdc/ruby-messenger-api/assets/87227379/3548757b-e906-4722-8ddb-fd31112913bd">
   <p align="center"><em>Create conversation</em></p>
