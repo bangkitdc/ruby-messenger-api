@@ -22,61 +22,44 @@ class ConversationsController < ApplicationController
 
   # POST /conversations
   def create
-    # Better to make transactions
-    # :)
+    # Start transaction
+    ActiveRecord::Base.transaction do
+      conversation = Conversation.new(conversation_params)
+      conversation.save!
 
-    conversation = Conversation.new(conversation_params)
-    if conversation.save
       # Create participants (members)
-      participant = Participant.create(user: current_user, conversation: conversation)
+      Participant.create!(user: current_user, conversation: conversation)
 
       # For testing only: use users with id = 1
-      Participant.create(user_id: 1, conversation_id: participant.conversation_id)
+      Participant.create!(user_id: 1, conversation_id: conversation.id)
 
-      if participant.persisted?
-        render json: {
-          message: "Conversation created successfully",
-          data: serialize_conversation(conversation, false),
-        }, status: :created
-      else
-        render json: {
-          message: "Internal server error",
-        }, status: :internal_server_error
-      end
-    else
       render json: {
-        message: "Operation unsuccessful",
-        errors: { conversation: ["Unprocessable entity"] },
-      }, status: :unprocessable_entity
+        message: "Conversation created successfully",
+        data: serialize_conversation(conversation, false),
+      }, status: :created
     end
   end
 
   # PATCH/PUT /conversations/:id
   def update
-    if conversation.update(conversation_params)
+    ActiveRecord::Base.transaction do
+      conversation.update!(conversation_params)
+
       render json: {
         message: "Conversation updated successfully",
         data: serialize_conversation(conversation, false),
       }, status: :ok
-    else
-      render json: {
-        message: "Operation unsuccessful",
-        errors: { conversation: ["Unprocessable entity"] },
-      }, status: :unprocessable_entity
     end
   end
 
   # DELETE /conversations/:id
   def destroy
-    # Already using cascade
-    if conversation.destroy
+    ActiveRecord::Base.transaction do
+      conversation.destroy!
+
       render json: {
         message: "Conversation deleted successfully",
       }, status: :ok
-    else
-      render json: {
-        message: "Operation unsuccessful",
-      }, status: :unprocessable_entity
     end
   end
 
@@ -105,7 +88,7 @@ class ConversationsController < ApplicationController
     @conversation ||= Conversation.find_by(id: params[:id])
   end
 
-  # Parameters
+  # Strong parameters
   def conversation_params
     params.require(:conversation).permit(
       :title
@@ -156,22 +139,10 @@ class ConversationsController < ApplicationController
     conversation = Conversation.find_by(id: params[:id])
 
     # Check availability
-    # Better to use throw and then having exception handler wrap the application
-    if !conversation
-      render json: {
-        message: "Conversation not found",
-      }, status: :not_found
-      return
-    end
+    raise ActiveRecord::RecordNotFound, "Conversation not found" unless conversation
 
     # Check authority
-    # Better to use throw and then having exception handler wrap the application
     isInTheConversation = Participant.find_by(user: current_user, conversation: conversation)
-    unless conversation && isInTheConversation
-      render json: {
-        message: "Invalid credentials",
-      }, status: :forbidden
-      return
-    end
+    raise ExceptionHandler::Forbidden, "Invalid credentials" unless isInTheConversation
   end
 end
