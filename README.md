@@ -14,6 +14,11 @@ This app is intended to be a simple server of a CRUD app built with Ruby on Rail
 - run `rails s`
 - for testing purposes, you can go to `application_controller.rb` and make `@current_user = User.find(1)`
 
+## DB Schema
+<div align="center">
+  <img width="550" alt="Screenshot 2024-05-18 021440" src="https://github.com/bangkitdc/ruby-messenger-api/assets/87227379/431ae384-4c4e-4253-a7da-1b0f6e13aab8">
+</div>
+
 ## Api Endpoint
 ### Conversations
 |Method| URL | Explanation |
