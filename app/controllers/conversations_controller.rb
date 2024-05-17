@@ -30,8 +30,8 @@ class ConversationsController < ApplicationController
       # Create participants (members)
       Participant.create!(user: current_user, conversation: conversation)
 
-      # For testing only: use users with id = 1
-      Participant.create!(user_id: 1, conversation_id: conversation.id)
+      # For testing only: use users with id = 2
+      Participant.create!(user_id: 2, conversation_id: conversation.id)
 
       render json: {
         message: "Conversation created successfully",
