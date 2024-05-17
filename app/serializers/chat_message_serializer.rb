@@ -5,10 +5,6 @@ class ChatMessageSerializer
 
   attributes :id, :message, :sender, :sent_at
 
-  attribute :message do |chat_message|
-    chat_message.content
-  end
-
   attribute :sender do |chat_message|
     {
       id: chat_message.user.id,
@@ -18,5 +14,19 @@ class ChatMessageSerializer
 
   attribute :sent_at do |chat_message|
     chat_message.created_at
+  end
+
+  attribute :conversation, if: Proc.new { |chat_message, params| params && params[:include_conversation] } do |chat_message|
+    conversation = chat_message.conversation
+    with_user = conversation.participants.where.not(user_id: chat_message.user.id).first.user
+
+    {
+      id: conversation.id,
+      with_user: {
+        id: with_user.id,
+        name: with_user.name,
+        photo_url: with_user.photo_url,
+      },
+    }
   end
 end
