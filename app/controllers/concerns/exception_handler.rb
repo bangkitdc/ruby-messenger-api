@@ -6,6 +6,7 @@ module ExceptionHandler
   class AuthenticationError < StandardError; end
   class MissingToken < StandardError; end
   class InvalidToken < StandardError; end
+  class Forbidden < StandardError; end
 
   included do
     # Define custom handlers
@@ -20,6 +21,10 @@ module ExceptionHandler
 
     rescue_from ActiveRecord::RecordInvalid do |e|
       json_response({ message: e.message }, :unprocessable_entity)
+    end
+
+    rescue_from ExceptionHandler::Forbidden do |e|
+      json_response({ message: e.message }, :forbidden)
     end
   end
 

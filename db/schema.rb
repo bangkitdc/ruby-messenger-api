@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_05_17_080447) do
+ActiveRecord::Schema.define(version: 2024_05_17_182345) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -51,8 +51,8 @@ ActiveRecord::Schema.define(version: 2024_05_17_080447) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  add_foreign_key "chat_messages", "conversations"
-  add_foreign_key "chat_messages", "users"
-  add_foreign_key "participants", "conversations"
-  add_foreign_key "participants", "users"
+  add_foreign_key "chat_messages", "conversations", on_delete: :cascade
+  add_foreign_key "chat_messages", "users", on_delete: :cascade
+  add_foreign_key "participants", "conversations", on_delete: :cascade
+  add_foreign_key "participants", "users", on_delete: :cascade
 end
